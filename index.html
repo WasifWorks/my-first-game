@@ -2,26 +2,41 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Time Freezes, You Move - 30 Levels</title>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 body { 
     margin:0; 
+    padding:0;
     background:#111; 
     color:#fff; 
     font-family:sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
 }
 #game-container {
-    position: relative;
+    width: 100%;
+    height: 100%;
+}
+#game-container canvas {
+    display: block;
+    margin: 0 auto;
 }
 #touch-controls { 
-    margin-top: 20px;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
+    z-index: 1000;
 }
 .btn { 
     width:90px; 
@@ -65,13 +80,15 @@ class MenuScene extends Phaser.Scene {
     
     create() {
         const scene = this;
+        const centerX = this.cameras.main.centerX;
+        const centerY = this.cameras.main.centerY;
 
-        scene.add.text(400, 50, 'TIME FREEZES', {fontSize:'56px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
-        scene.add.text(400, 110, 'YOU MOVE', {fontSize:'42px', color:'#0f0', fontStyle:'bold'}).setOrigin(0.5);
-        scene.add.text(400, 160, 'Move to unfreeze time • Stop to freeze bullets', {fontSize:'20px', color:'#aaa'}).setOrigin(0.5);
-        scene.add.text(400, 190, '⚠️ EXTREME DIFFICULTY after Level 10!', {fontSize:'18px', color:'#f00'}).setOrigin(0.5);
+        scene.add.text(centerX, centerY - 200, 'TIME FREEZES', {fontSize:'56px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
+        scene.add.text(centerX, centerY - 140, 'YOU MOVE', {fontSize:'42px', color:'#0f0', fontStyle:'bold'}).setOrigin(0.5);
+        scene.add.text(centerX, centerY - 90, 'Move to unfreeze time • Stop to freeze bullets', {fontSize:'20px', color:'#aaa'}).setOrigin(0.5);
+        scene.add.text(centerX, centerY - 60, '⚠️ EXTREME DIFFICULTY after Level 10!', {fontSize:'18px', color:'#f00'}).setOrigin(0.5);
 
-        let playBtn = scene.add.text(400, 230, '▶ START GAME', {
+        let playBtn = scene.add.text(centerX, centerY - 20, '▶ START GAME', {
             fontSize:'32px',
             color:'#0ff',
             backgroundColor:'#000',
@@ -89,10 +106,16 @@ class MenuScene extends Phaser.Scene {
         const scene = this;
         scene.children.removeAll();
         
-        scene.add.text(400, 30, 'SELECT LEVEL', {fontSize:'36px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
-        scene.add.text(400, 75, 'Levels 1-10: Normal • 11-30: EXTREME', {fontSize:'18px', color:'#aaa'}).setOrigin(0.5);
+        const centerX = this.cameras.main.centerX;
+        const startY = 110;
         
-        let x0 = 120, y0 = 110, cols = 10, spacing = 65;
+        scene.add.text(centerX, 30, 'SELECT LEVEL', {fontSize:'36px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
+        scene.add.text(centerX, 75, 'Levels 1-10: Normal • 11-30: EXTREME', {fontSize:'18px', color:'#aaa'}).setOrigin(0.5);
+        
+        let cols = 10;
+        let spacing = 65;
+        let x0 = centerX - (cols * spacing) / 2 + spacing / 2;
+        let y0 = startY;
         
         for(let i = 1; i <= 30; i++) {
             let x = x0 + ((i-1) % cols) * spacing;
@@ -101,7 +124,7 @@ class MenuScene extends Phaser.Scene {
             
             let color = '#444';
             if(unlocked) {
-                color = i <= 10 ? '#0f0' : '#f00'; // Green for easy, red for hard
+                color = i <= 10 ? '#0f0' : '#f00';
             }
             
             let txt = scene.add.text(x, y, i, {
@@ -256,6 +279,8 @@ class GameScene extends Phaser.Scene {
         if(this.menuBtn) this.menuBtn.destroy();
         if(this.difficultyText) this.difficultyText.destroy();
 
+        const width = this.cameras.main.width;
+
         // UI
         this.levelText = this.add.text(10, 10, `Level ${levelNum}`, {fontSize:'28px', color:'#0ff'});
         
@@ -263,7 +288,7 @@ class GameScene extends Phaser.Scene {
             this.difficultyText = this.add.text(10, 45, '⚠️ EXTREME', {fontSize:'22px', color:'#f00'});
         }
         
-        this.menuBtn = this.add.text(750, 10, 'Menu', {
+        this.menuBtn = this.add.text(width - 10, 10, 'Menu', {
             fontSize:'24px',
             color:'#aaa',
             backgroundColor:'#222',
@@ -426,12 +451,16 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Initialize Phaser game
+// Initialize Phaser game with fullscreen scaling
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 500,
-    parent: 'game-container',
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: 'game-container',
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 500
+    },
     backgroundColor: "#111",
     physics: { 
         default: "arcade", 
