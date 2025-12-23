@@ -38,6 +38,7 @@ body {
 }
 .btn:active { 
     background:#555; 
+    transform: scale(0.95);
 }
 </style>
 </head>
@@ -65,16 +66,16 @@ class MenuScene extends Phaser.Scene {
     create() {
         const scene = this;
 
-        scene.add.text(400, 50, 'TIME FREEZES', {fontSize:'40px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
-        scene.add.text(400, 100, 'YOU MOVE', {fontSize:'30px', color:'#0f0', fontStyle:'bold'}).setOrigin(0.5);
-        scene.add.text(400, 150, 'Move to unfreeze time • Stop to freeze bullets', {fontSize:'16px', color:'#aaa'}).setOrigin(0.5);
-        scene.add.text(400, 175, '⚠️ EXTREME DIFFICULTY after Level 10!', {fontSize:'14px', color:'#f00'}).setOrigin(0.5);
+        scene.add.text(400, 50, 'TIME FREEZES', {fontSize:'56px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
+        scene.add.text(400, 110, 'YOU MOVE', {fontSize:'42px', color:'#0f0', fontStyle:'bold'}).setOrigin(0.5);
+        scene.add.text(400, 160, 'Move to unfreeze time • Stop to freeze bullets', {fontSize:'20px', color:'#aaa'}).setOrigin(0.5);
+        scene.add.text(400, 190, '⚠️ EXTREME DIFFICULTY after Level 10!', {fontSize:'18px', color:'#f00'}).setOrigin(0.5);
 
-        let playBtn = scene.add.text(400, 220, '▶ START GAME', {
-            fontSize:'24px',
+        let playBtn = scene.add.text(400, 230, '▶ START GAME', {
+            fontSize:'32px',
             color:'#0ff',
             backgroundColor:'#000',
-            padding:{x:20, y:10}
+            padding:{x:24, y:12}
         }).setOrigin(0.5).setInteractive();
         
         playBtn.on('pointerdown', () => scene.createLevelSelect());
@@ -88,8 +89,8 @@ class MenuScene extends Phaser.Scene {
         const scene = this;
         scene.children.removeAll();
         
-        scene.add.text(400, 30, 'SELECT LEVEL', {fontSize:'28px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
-        scene.add.text(400, 65, 'Levels 1-10: Normal • 11-30: EXTREME', {fontSize:'14px', color:'#aaa'}).setOrigin(0.5);
+        scene.add.text(400, 30, 'SELECT LEVEL', {fontSize:'36px', color:'#0ff', fontStyle:'bold'}).setOrigin(0.5);
+        scene.add.text(400, 75, 'Levels 1-10: Normal • 11-30: EXTREME', {fontSize:'18px', color:'#aaa'}).setOrigin(0.5);
         
         let x0 = 120, y0 = 110, cols = 10, spacing = 65;
         
@@ -104,10 +105,10 @@ class MenuScene extends Phaser.Scene {
             }
             
             let txt = scene.add.text(x, y, i, {
-                fontSize:'18px',
+                fontSize:'24px',
                 color: color,
                 backgroundColor:'#222',
-                padding:{x:12, y:8}
+                padding:{x:16, y:12}
             }).setOrigin(0.5).setInteractive();
             
             if(unlocked) {
@@ -256,17 +257,17 @@ class GameScene extends Phaser.Scene {
         if(this.difficultyText) this.difficultyText.destroy();
 
         // UI
-        this.levelText = this.add.text(10, 10, `Level ${levelNum}`, {fontSize:'20px', color:'#0ff'});
+        this.levelText = this.add.text(10, 10, `Level ${levelNum}`, {fontSize:'28px', color:'#0ff'});
         
         if(levelNum > 10) {
-            this.difficultyText = this.add.text(10, 35, '⚠️ EXTREME', {fontSize:'16px', color:'#f00'});
+            this.difficultyText = this.add.text(10, 45, '⚠️ EXTREME', {fontSize:'22px', color:'#f00'});
         }
         
         this.menuBtn = this.add.text(750, 10, 'Menu', {
-            fontSize:'18px',
+            fontSize:'24px',
             color:'#aaa',
             backgroundColor:'#222',
-            padding:{x:10, y:5}
+            padding:{x:14, y:8}
         }).setOrigin(1, 0).setInteractive();
         this.menuBtn.on('pointerdown', () => this.scene.start('MenuScene'));
 
@@ -275,10 +276,10 @@ class GameScene extends Phaser.Scene {
         this.walls = this.physics.add.staticGroup();
 
         // Player
-        this.player = this.add.text(level.player.x, level.player.y, '😎', {fontSize:'36px'});
+        this.player = this.add.text(level.player.x, level.player.y, '😎', {fontSize:'48px'});
         this.physics.add.existing(this.player);
         this.player.body.setCollideWorldBounds(true);
-        this.player.body.setSize(30, 30);
+        this.player.body.setSize(40, 40);
 
         // Goal
         this.goal = this.add.rectangle(level.goal.x, level.goal.y, 40, 40, 0x00ff66);
@@ -445,5 +446,4 @@ const config = {
 const game = new Phaser.Game(config);
 </script>
 </body>
-
 </html>
